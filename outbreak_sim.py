@@ -1,9 +1,9 @@
 import pandas as pd
 
 class City():
-    def __init__(self, name, colour, adjacents):
+    def __init__(self, name, color, adjacents):
         self.name = name
-        self.colour = colour
+        self.color = color
         self.adjacents = adjacents
         self.cubes = {
             "Black": 0,
@@ -16,12 +16,12 @@ class City():
         self.num_inner_adjacent_cubes = 0
         self.station = False
 
-    def add_cube(self, colour, game):
+    def add_cube(self, color, game):
         if self.num_cubes < 3:
-            self.cubes[colour] += 1
+            self.cubes[color] += 1
             self.num_cubes += 1
             try:
-                game.disease_cubes[colour] -= 1
+                game.disease_cubes[color] -= 1
             except:
                 pass
             for adjacent in self.adjacents:
@@ -40,7 +40,7 @@ class City():
         adjacent_city_names = final_comma_ampersand(adjacent_city_names)
         game.outbreak_marker.increase(game)
         for adjacent in self.adjacents:
-            adjacent.add_cube(self.colour, game)
+            adjacent.add_cube(self.color, game)
             cube_cubes = "cube" if adjacent.num_cubes == 1 else "cubes"
 
 class Game():
@@ -59,7 +59,7 @@ class Game():
                 if pd.notnull(i):
                     adj.append(i)
             city_name = row["City"]
-            city_object = City(name = row["City"], colour = row["Colour"], adjacents = adj)
+            city_object = City(name = row["City"], color = row["Colour"], adjacents = adj)
             self.cities.update({city_name: city_object})
 
         ### Populating cities' adjacent cities lists with city objects
