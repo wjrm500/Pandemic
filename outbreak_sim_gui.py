@@ -1,11 +1,17 @@
 import tkinter as tk
+from tkinter import ttk
 
 window = tk.Tk()
 window.title("Pandemic Outbreak Assistant")
 
+from outbreak_sim import *
+
+g = Game()
+
 generic_width = 15
 
 def click():
+    g.outbroken_cities = []
     for city, value in input_dict.items():
         try:
             cubes_to_add = int(value["entry"].get())
@@ -13,7 +19,7 @@ def click():
                 g.cities[city].add_cube(g.cities[city].color, g)
         except:
             pass
-    city_to_infect = submit.get()
+    city_to_infect = submit_clicked.get()
     g.cities[city_to_infect].add_cube(g.cities[city_to_infect].color, g)
 
     for key, value in g.cities.items():
@@ -22,10 +28,10 @@ def click():
             output_dict[key]["entry"].insert(tk.END, str(value.num_cubes))
 
     for outbroken_city in g.outbroken_cities:
-        output_dict[outbroken_city.name]["label"].config(relief = "solid", font = "Arial 9 bold", bg = "white", fg = "black")
+        output_dict[outbroken_city.name]["label"].config(relief = "solid", font = "Arial 9 bold", bg = "white", fg = "red")
 
 def reset():
-    submit.delete(0, tk.END)
+    submit_clicked.set("Select city...")
     for value in input_dict.values():
         value["entry"].delete(0, tk.END)
     for value in output_dict.values():
@@ -34,10 +40,10 @@ def reset():
     for city in g.cities.values():
         city.num_cubes = 0
     g.outbroken_cities = []
-    submit.focus_set()
+    # submit.focus_set()
 
 def output_input():
-    submit.delete(0, tk.END)
+    submit_clicked.set("Select city...")
     for value in input_dict.values():
         value["entry"].delete(0, tk.END)
     for city, value in output_dict.items():
@@ -45,7 +51,8 @@ def output_input():
     for value in output_dict.values():
         value["label"].config(relief = "flat", font = "Arial 9", bg = value["bg_color"], fg = value["fg_color"])
         value["entry"].delete(0, tk.END)
-    submit.focus_set()
+    g.outbroken_cities = []
+    # submit.focus_set()
 
 tk.Label(window, width = 7).grid(row = 0, column = 3)
 tk.Label(window, width = 7).grid(row = 0, column = 5)
@@ -54,8 +61,13 @@ tk.Label(window, width = 7).grid(row = 0, column = 9)
 
 tk.Label(window, width = 2).grid(column = 0)
 tk.Label(window, text = "City to infect", width = generic_width, anchor = "w").grid(row = 1, column = 1)
-submit = tk.Entry(window, width = generic_width + 3)
+submit_clicked = tk.StringVar()
+submit_clicked.set("Select city...")
+options = [city for city in sorted(g.cities)]
+submit = ttk.Combobox(window, textvariable = submit_clicked, values = options, state="readonly")
+submit.config(width = generic_width)
 submit.grid(row = 1, column = 2)
+
 tk.Button(window, text = "Go!", command = click, width = 4).grid(row = 1, column = 3)
 tk.Label(window).grid(row = 2)
 tk.Label(window, text = "Cubes before", width = generic_width, anchor = "w").grid(row = 3, column = 1)
@@ -67,9 +79,6 @@ tk.Button(window, text = "Output -> Input", command = output_input, width = 12).
 tk.Button(window, text = "Exit", command = window.quit, width = 4).grid(row = 1, column = 9)
 tk.Label(window, width = 2).grid(column = 10)
 
-from outbreak_sim import *
-
-g = Game()
 cities = {}
 for color in ["Black", "Blue", "Red", "Yellow"]:
     color_cities = [city.name for city in g.cities.values() if city.color == color]
