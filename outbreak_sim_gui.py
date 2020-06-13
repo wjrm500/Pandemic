@@ -29,6 +29,17 @@ def reset():
         entry.delete(0, tk.END)
     for city in g.cities.values():
         city.num_cubes = 0
+    g.outbroken_cities = []
+    submit.focus_set()
+
+def output_input():
+    submit.delete(0, tk.END)
+    for entry in input_entry_dict.values():
+        entry.delete(0, tk.END)
+    for city, entry in output_entry_dict.items():
+        input_entry_dict[city].insert(tk.END, entry.get())
+    for entry in output_entry_dict.values():
+        entry.delete(0, tk.END)
     submit.focus_set()
 
 tk.Label(window, width = 7).grid(row = 0, column = 3)
@@ -47,6 +58,7 @@ tk.Label(window).grid(row = 15)
 tk.Label(window, text = "Cubes after", width = generic_width, anchor = "w").grid(row = 16, column = 1)
 tk.Label(window).grid(row = 27)
 tk.Button(window, text = "Reset", command = reset, width = 4).grid(row = 1, column = 7)
+tk.Button(window, text = "Output -> Input", command = output_input, width = 12).grid(row = 1, column = 8)
 tk.Button(window, text = "Exit", command = window.quit, width = 4).grid(row = 1, column = 9)
 tk.Label(window, width = 2).grid(column = 10)
 
@@ -79,7 +91,5 @@ for i, (colour, colour_cities) in enumerate(cities.items()):
         output_entry = tk.Entry(window, width = 5)
         output_entry.grid(row = j + 16, column = i * 2 + 3)
         output_entry_dict[city] = output_entry
-
-
 
 window.mainloop()
